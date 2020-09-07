@@ -1,0 +1,39 @@
+---
+- hosts: controllers
+  remote_user: root
+  vars_prompt:
+  - name: "host_info_file"
+    prompt: "Enter file name which will store hosts info"
+    default: "contoller-host-list.txt"
+    private: no
+  tasks:
+  - name: update kernel
+    yum:
+      name: kernel
+      state: latest
+      disablerepo: '*'
+      enablerepo: updates
+    register: KERNEL_PKG
+    notify:
+      - reboot server
+      - update motd 
+
+  - meta: flush_handlers
+
+  - name: hosts info file
+    template:
+      src: template.j2
+      dest: "/root/{{host_info_file}}"
+      mode: 0644
+ 
+  handlers:
+  - name: reboot server
+    reboot:
+     msg: "Reboot initiated by Ansible playbook"
+   
+  - name: update motd
+    lineinfile:
+      path: /etc/motd
+      line: " We updated the kernel to {{ KERNEL_PKG.changes.updated[0][1].split(' ')[0] }} "
+      create: yes 
+  

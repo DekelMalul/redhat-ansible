@@ -1,0 +1,13 @@
+---
+# tasks file for port-forwarding 
+- name: Manage Port Forwarding
+  iptables:
+    table: nat
+    chain: PREROUTING
+    in_interface: eth0
+    protocol: tcp
+    match: tcp
+    destination_port: "{{ fp_port_forward_from }}" 
+    jump: REDIRECT
+    to_ports: "{{ fp_destination_port }}"
+    comment: "Redirect {{ fp_port_forward_from }} traffic to port {{ fp_destination_port }}"

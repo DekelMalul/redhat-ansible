@@ -1,0 +1,28 @@
+---
+- hosts: controllers
+  remote_user: root
+  gather_facts: no
+  vars_prompt:
+  - name: fp_port_forward_from
+    prompt: "enter port forward from"
+    private: no
+    default: 443
+
+  - name: fp_destination_port
+    prompt: "enter destination port"
+    private: no
+    default: 8080
+ 
+  roles: 
+  - name: port-forwarding 
+  
+  tasks:
+  - name: downolad remote file
+    get_url:
+      url: http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
+      dest: /root/cirros.img
+    retries: 3
+    delay: 3
+    register: result
+    until: result is not failed
+    run_once: true

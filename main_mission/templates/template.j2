@@ -1,0 +1,4 @@
+{% for host in groups['controllers'] %}
+HOSTNAME: {{ hostvars[host].ansible_nodename }} IP_ADDRESS: {{ hostvars[host].ansible_default_ipv4.address }}
+RAM_MEMORY_SIZE: {{ (hostvars[host].ansible_memtotal_mb/1024)|round|int }}GB"
+{% endfor %}
